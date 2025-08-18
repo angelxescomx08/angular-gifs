@@ -1,1 +1,5 @@
-<h1>{{query()}}</h1>
+<h1>Mostrando resultados para: {{query()}}</h1>
+
+<section class="py-5">
+  <app-gif-list [gifs]="gifsByKey()"></app-gif-list>
+</section>

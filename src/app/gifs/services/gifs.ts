@@ -6,6 +6,14 @@ import { GifMapper } from '../mappers/gif.mapper';
 import { Gif } from '../types/gif.type';
 import { map, tap } from 'rxjs';
 
+function loadHistoryGifs() {
+  const history = localStorage.getItem('history');
+  if (history) {
+    return JSON.parse(history);
+  }
+  return {};
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +22,7 @@ export class Gifs {
   trendingGifs = signal<Gif[]>([]);
   trendingGifsLoading = signal(false);
 
-  searchHistory = signal<Record<string, Gif[]>>({});
+  searchHistory = signal<Record<string, Gif[]>>(loadHistoryGifs());
   searchHistoryKeys = computed(() => Object.keys(this.searchHistory()));
 
   constructor() {
@@ -55,7 +63,12 @@ export class Gifs {
             ...history,
             [query.toLowerCase()]: gifs,
           }));
+          localStorage.setItem('history', JSON.stringify(this.searchHistory()));
         })
       )
+  }
+
+  getHistoryGifs(query: string) {
+    return this.searchHistory()[query.toLowerCase()] || [];
   }
 }
